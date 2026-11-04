@@ -8,6 +8,9 @@ if (legacyAnon) publishableKeys.push(legacyAnon);
 const secretKeys = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}');
 const serverKey = secretKeys.default || Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 const allowedOrigins = new Set([
+  'https://supa-soda-hackathon.vercel.app',
+  'https://supa-soda-hackathon-abdul-rafehs-projects-b2ef5622.vercel.app',
+  'https://supa-soda-hackathon-git-main-abdul-rafehs-projects-b2ef5622.vercel.app',
   'https://fhirguard-integrity-lab.arafeh-rana.chatgpt.site',
   'http://localhost:5173',
   'http://127.0.0.1:5173',

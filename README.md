@@ -31,7 +31,9 @@ Imports are sequential and may partially complete. The frontend stops on transpo
 ## Backend implementation
 supabase/functions/fhirguard/index.ts is the deployed Edge Function. Shared rules live in supabase/functions/_shared, with root re-exports used by the frontend. The function verifies the apikey against the environment's project publishable keys. verify_jwt is false because these keys are not JWTs; authentication occurs inside the handler. Server database requests use Supabase's provisioned secret key or legacy service-role fallback.
 
-CORS allows the private Site and localhost ports 5173/5174. Other frontend origins must be added deliberately. URL fetching forwards no caller credentials and uses a fixed trusted-host allowlist.
+The production frontend is https://supa-soda-hackathon.vercel.app. Vercel is linked to this GitHub repository.
+
+CORS allows the Vercel production and main-branch aliases, the private Site and localhost ports 5173/5174. Other frontend origins must be added deliberately. URL fetching forwards no caller credentials and uses a fixed trusted-host allowlist.
 
 supabase/schema.sql defines the initial public ingestion_events, patients, observations, validation_issues tables and the two gateway RPCs. It has already been applied to this project. RLS is enabled and browser roles have no direct table or RPC privileges. Only the gateway's service role can use them. The [RLS-with-no-policies informational advisory](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) is intentional for these service-only tables.
 
