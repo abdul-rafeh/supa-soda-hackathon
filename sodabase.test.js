@@ -24,6 +24,6 @@ test('provider auth failure and tool errors do not become healthy results',async
  assert.equal(reportFromResult('fhirguard.resources',{isError:true,content:[]}).status,'unavailable');
 });
 test('provider verdict is preserved without numeric score conversion',()=>{
- const r=reportFromResult('fhirguard.resources',{content:[{type:'text',text:'{"table":"fhirguard.resources","status":"trusted","findings":[]}'}]});
+ const r=reportFromResult('fhirguard.resources',{structuredContent:{result:'wrapped provider payload'},content:[{type:'text',text:'{"table":"fhirguard.resources","status":"trusted","findings":[]}'}]});
  assert.equal(r.status,'trusted'); assert.equal(r.score,undefined);
 });

@@ -59,9 +59,10 @@ export async function connectSodabase(token, fetcher = fetch) {
 export function reportFromResult(table, result) {
   if (result?.isError) return {table,status:'unavailable',findings:[],message:'Sodabase could not return a result for this table.'};
   const text = (result?.content || []).filter(c=>c.type==='text').map(c=>c.text).join('\n');
-  let report = result?.structuredContent;
-  if (!report) { try { report = JSON.parse(text); } catch { /* Unknown provider shape must not appear healthy. */ } }
+  let parsed;
+  try { parsed = JSON.parse(text); } catch { /* Unknown provider shape must not appear healthy. */ }
   const verdicts = ['trusted','caveated','untrusted','unknown','scanning'];
+  const report = [result?.structuredContent, parsed].find(r=>r?.table === table && verdicts.includes(r.status));
   if (!report || report.table !== table || !verdicts.includes(report.status)) {
     return {table,status:'unavailable',findings:[],message:'Sodabase returned an unrecognized report format.'};
   }
