@@ -1,24 +1,44 @@
 import React,{useEffect,useState} from 'react';
 import {createRoot} from 'react-dom/client';
-import {fixtures} from './engine.js';
-import {live,snapshot,submit,ingest} from './api.js';
+import SourceInput from './SourceInput.jsx';
+import {live,snapshot,importDocument,ingest} from './api.js';
 import './style.css';
 const paths={shield:'M12 2 21 6v6c0 5-5 8-9 10-4-2-9-5-9-10V6z M7 12h3l1-3 2 6 1-3h3',code:'m7 6-5 6 5 6m10-12 5 6-5 6m-4-15-2 18',chart:'M3 3v17h18 M7 15v-4m5 4V6m5 9v-7',flow:'M4 6h9l5 6-5 6H4m0-12v12m14-6h4',stack:'m12 3 10 5-10 5L2 8z M2 12l10 5 10-5M2 16l10 5 10-5',check:'m4 12 5 5L20 6',alert:'m12 3 10 18H2z M12 9v5m0 3v1',arrow:'M4 12h15m-6-6 6 6-6 6',play:'m7 4 13 8-13 8z',pulse:'M1 12h6l3-8 4 16 3-8h6',circle:'M20 12a8 8 0 1 1-16 0 8 8 0 1 1 16 0',clock:'M20 12a8 8 0 1 1-16 0 8 8 0 1 1 16 0 M12 7v5l3 2'};
 function Icon({name,size=18}){return <svg aria-hidden="true" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><path d={paths[name]}/></svg>}
-const titles=['Patient','Observation','Broken reference'];
+
 function Diagram(){return <div className="diagram" aria-hidden="true"><svg viewBox="0 0 340 120"><g fill="none" stroke="#6b9984" strokeWidth="1.5"><path d="M16 60h35q12 0 22-11l16-19q8-10 22-10h65q12 0 22 11l17 19q8 10 18 10h85M16 60h35q12 0 22 11l16 19q8 10 22 10h65q12 0 22-11l17-19q8-10 18-10M50 60h184"/><path strokeDasharray="2 6" d="M4 60h33m240 0h55"/></g>{[[16,60],[115,20],[172,100],[255,60],[318,60]].map(([x,y])=><circle key={x} cx={x} cy={y} r="4" fill="#b9e2a4"/>)}<rect x="117" y="39" width="54" height="42" rx="7" fill="#caeba9"/><path d="m132 60 8 7 15-15" fill="none" stroke="#234735" strokeWidth="3"/></svg></div>}
 function Verdict({event}){return <section className="panel inspector" aria-live="polite"><div className="panelHead"><span className="tile"><Icon name="pulse"/></span><h2>Validation result</h2></div><div className="verdict"><small>GATEWAY VERDICT</small><h3 className={event?.outcome||''}>{event?event.outcome==='accepted'?'Accepted':'Quarantined':'Awaiting resource'}</h3><p>{event?event.type+' / '+event.resourceId:'Submit a resource to inspect its checks.'}</p></div>{[['structure','FHIR R4 structure'],['integrity','Local integrity']].map(([key,label],i)=><div className="checkrow" key={key}><span className="ordinal">0{i+1}</span><strong>{label}</strong><span className={'badge '+event?.[key]}>{event?.[key]||'Pending'}</span></div>)}{event?.issues.map((issue,i)=><div className="issue" key={i}><code>{issue.path}</code><p>{issue.message}</p></div>)}</section>}
-function App(){const [page,nav]=useState('Validator'),[raw,edit]=useState(JSON.stringify(fixtures[0],null,2)),[selected,pick]=useState(0),[data,setData]=useState({events:[],score:null}),[result,setResult]=useState(null),[busy,setBusy]=useState(false),[error,setError]=useState(''),[filter,setFilter]=useState('All'),[detail,inspect]=useState(null);
+function App(){const [page,nav]=useState('Validator'),[data,setData]=useState({events:[],score:null}),[result,setResult]=useState(null),[imported,setImported]=useState([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[filter,setFilter]=useState('All'),[detail,inspect]=useState(null);
  async function refresh(){setData(await snapshot())}
  useEffect(()=>{refresh().catch(e=>setError(e.message))},[]);
- async function run(fn){setBusy(true);setError('');try{await fn();await refresh()}catch(e){setError(e.message)}finally{setBusy(false)}}
+ async function run(fn) {
+  setBusy(true);
+  setError('');
+  try { await fn(); }
+  catch (error) { setError(error.message); }
+  try { await refresh(); }
+  catch (error) { setError(previous => [previous, 'History refresh failed. ' + error.message].filter(Boolean).join(' ')); }
+  setBusy(false);
+ }
+ function importInput(raw, source) {
+  setResult(null);
+  setImported([]);
+  return run(() => importDocument(raw, source, event => {
+   setResult(event);
+   setImported(previous => [...previous, event]);
+  }));
+ }
  const total=data.events.length,accepted=data.events.filter(e=>e.outcome==='accepted').length;
  return <div className="shell"><aside><div className="brand"><span className="logo"><Icon name="shield" size={26}/></span>FHIRGuard</div><small className="sideLabel">WORKSPACE</small><nav>{[['Validator','code'],['Dashboard','chart']].map(([n,ic])=><button key={n} className={page===n?'nav active':'nav'} onClick={()=>nav(n)}><Icon name={ic}/>{n}{page===n&&<b>•</b>}</button>)}</nav><div className="sideFoot"><i/> {live?'Connected gateway':'Demo workspace'}<small>FHIR R4 · v1.0</small></div></aside>
  <main><header><div>Workspace <span>/</span> <strong>{page}</strong></div><div className="env"><i/>{live?'Live gateway':'Local demo'}</div></header>
  <div className="content"><div className="hero"><div><small><i/> DATA INTEGRITY LAB</small><h1>{page==='Validator'?'Resource validator':'Quality dashboard'}</h1><p>{page==='Validator'?'Inspect FHIR records before they enter trusted storage.':'Trace ingestion outcomes across your workspace.'}</p></div><Diagram/></div>
  <div className="stats">{[['Ingested',total,'stack'],['Accepted',accepted,'check'],['Quarantined',total-accepted,'alert'],['Sodabase score',data.score??'—','pulse']].map(([label,val,ic])=><div key={label}><small><Icon name={ic} size={15}/>{label}</small><strong>{val}</strong>{label==='Sodabase score'&&<em>{data.score==null?'Unavailable':'Schema level'}</em>}</div>)}</div>
  {error&&<p role="alert" className="issue">{error}</p>}
- {page==='Validator'?<div className="cols"><section className="panel"><div className="panelHead"><span className="tile"><Icon name="code"/></span><h2>Resource input</h2><small className="tag">JSON</small></div><div className="editorBody"><small>LOAD EXAMPLE</small><div className="examples">{titles.map((n,i)=><button aria-pressed={selected===i} key={n} onClick={()=>{pick(i);edit(JSON.stringify(fixtures[i],null,2));setResult(null)}}>{n}</button>)}</div><label htmlFor="payload">Resource payload</label><textarea id="payload" spellCheck="false" value={raw} onChange={e=>{edit(e.target.value);pick(-1);setResult(null)}} disabled={busy}/><button className="primary" disabled={busy||!raw.trim()} onClick={()=>run(async()=>setResult(await submit(raw)))}><Icon name="play" size={14}/>{busy?'Validating…':'Validate resource'}</button></div></section><Verdict event={result}/></div>:
- <section className="panel"><div className="panelHead"><span className="tile"><Icon name="clock"/></span><h2>Ingestion history</h2><button className="primary ml-auto" disabled={busy} onClick={()=>run(ingest)}>{live?'Run ingestion':'Run demo batch'} <Icon name="arrow" size={15}/></button></div><div className="editorBody"><div className="examples">{['All','Accepted','Quarantined'].map(n=><button key={n} aria-pressed={filter===n} onClick={()=>setFilter(n)}>{n}</button>)}{live&&<button disabled={busy} onClick={()=>run(async()=>{})}>Refresh</button>}</div>{data.events.filter(e=>filter==='All'||e.outcome===filter.toLowerCase()).map(e=><div key={e.eventId}><button className="event" aria-expanded={detail===e.eventId} onClick={()=>inspect(detail===e.eventId?null:e.eventId)}><Icon name="code"/><strong>{e.type} / {e.resourceId}</strong><span className={'badge '+e.outcome}>{e.outcome}</span><time>{new Date(e.time).toLocaleTimeString()}</time></button>{detail===e.eventId&&<div className="eventDetail"><Verdict event={e}/><pre>{e.raw}</pre></div>}</div>)}{!data.events.some(e=>filter==='All'||e.outcome===filter.toLowerCase())&&<p className="empty">{total?'No events match this filter.':'No ingestion events yet. Submit a resource or run a batch to start the log.'}</p>}</div></section>}
- <footer><Icon name="shield" size={14}/> FHIRGuard <span> / </span> {live?'Connected workspace':'Synthetic data · Session-only workspace'}</footer></div></main></div>}
+ {page==='Validator'?<div className="cols"><SourceInput busy={busy} onSubmit={importInput}/><div><Verdict event={result}/>
+ {imported.length > 0 && <section className="panel importSummary" aria-live="polite">
+ <div className="panelHead"><h2>This import · {imported.length} processed</h2></div>
+ <div className="editorBody">{imported.map(event => <button className="event" key={event.eventId} onClick={() => setResult(event)}><strong>{event.type} / {event.resourceId}</strong><span className={'badge '+event.outcome}>{event.outcome}</span></button>)}</div>
+ </section>}</div></div>:
+ <section className="panel"><div className="panelHead"><span className="tile"><Icon name="clock"/></span><h2>Ingestion history</h2><button className="primary ml-auto" disabled={busy} onClick={()=>run(ingest)}>{live?'Run ingestion':'Run demo batch'} <Icon name="arrow" size={15}/></button></div><div className="editorBody"><div className="examples">{['All','Accepted','Quarantined'].map(n=><button key={n} aria-pressed={filter===n} onClick={()=>setFilter(n)}>{n}</button>)}{live&&<button disabled={busy} onClick={()=>run(async()=>{})}>Refresh</button>}</div>{data.events.filter(e=>filter==='All'||e.outcome===filter.toLowerCase()).map(e=><div key={e.eventId}><button className="event" aria-expanded={detail===e.eventId} onClick={()=>inspect(detail===e.eventId?null:e.eventId)}><Icon name="code"/><strong>{e.type} / {e.resourceId}</strong><span className={'badge '+e.outcome}>{e.outcome}</span><time>{new Date(e.time).toLocaleTimeString()}</time></button>{detail===e.eventId&&<div className="eventDetail"><Verdict event={e}/><p className="inputHint sourceName">Source · {e.source?.name || 'Unspecified'}</p><pre>{e.raw}</pre></div>}</div>)}{!data.events.some(e=>filter==='All'||e.outcome===filter.toLowerCase())&&<p className="empty">{total?'No events match this filter.':'No ingestion events yet. Submit a resource or run a batch to start the log.'}</p>}</div></section>}
+ <footer><Icon name="shield" size={14}/> FHIRGuard <span> / </span> {live?'Connected workspace':'Session-only workspace'}</footer></div></main></div>}
 createRoot(document.getElementById('root')).render(<App/>);
