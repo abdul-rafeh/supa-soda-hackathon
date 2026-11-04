@@ -13,6 +13,8 @@ export function evaluate(raw,events){
  if(id!==undefined && (typeof id!=='string'||! /^[A-Za-z0-9.-]{1,64}$/.test(id)))issue('structure','id','Use a FHIR id of 1–64 letters, digits, periods or hyphens.');
  if(type==='Patient' && resource.active!==undefined && typeof resource.active!=='boolean')issue('structure','active','Expected a boolean.');
  if(type==='Observation'){
+ const values=Object.keys(resource).filter(k=>/^value[A-Z]/.test(k));
+ if(values.length>1)issue('structure','value[x]','Observation may supply only one value[x] field.');
  if(!statuses.includes(resource.status))issue('structure','status','Expected an R4 Observation status.');
  const code=resource.code;
  if(!code || typeof code!=='object'||Array.isArray(code)||(!code.text&&!code.coding?.length))issue('structure','code','Supply an observation code with text or coding for this demo.');

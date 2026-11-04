@@ -11,3 +11,10 @@ test('syntax and malformed resources skip integrity checks',()=>{
  for(const raw of ['{','null','[]','{"resourceType":"Observation"}','{"resourceType":"Patient","active":"yes"}']){
  const e=evaluate(raw,[]);assert.equal(e.structure,'failed');assert.equal(e.integrity,'skipped');assert.equal(e.raw,raw)}
 });
+
+// Regression from the backend owner's fixture pack.
+test('Observation cannot carry competing value[x] fields',()=>{
+ const event=evaluate(JSON.stringify({resourceType:'Observation',id:'choice-test',status:'final',code:{text:'test'},valueQuantity:{value:1},valueString:'one'}),[]);
+ assert.equal(event.structure,'failed');
+ assert.ok(event.issues.some(i=>i.path==='value[x]'));
+});
