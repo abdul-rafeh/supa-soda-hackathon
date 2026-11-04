@@ -1,0 +1,4 @@
+project_id = "dbloynewlgozjpqgkyft"
+
+[functions.fhirguard]
+verify_jwt = false

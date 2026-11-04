@@ -1,45 +1,45 @@
-# FHIRGuard frontend
-React, Vite and Tailwind. Install with npm ci and launch with npm run dev. Run npm test and npm run build before deploying.
+# FHIRGuard
+React, Vite and Tailwind frontend with a Supabase Edge Function for a shared synthetic-data hackathon workspace.
 
-## Rehearse the demo
-Select Patient and click Validate & import, then repeat for Observation and Broken reference. Open Dashboard, filter Quarantined and expand the event. The demo uses session memory, so reloading starts a clean run. The Run demo batch button submits all three examples. Counters measure submission events, including repeated attempts. Demo checks cover selected fields only.
+## Run locally
+Copy .env.example to .env.local and supply the project's publishable key. Run npm ci and npm run dev. Run npm test and npm run build to verify changes.
 
-## Connect the backend
-Set VITE_GATEWAY_URL to the Edge Function base URL in .env.local and rebuild. Set VITE_SUPABASE_PUBLISHABLE_KEY if the endpoint accepts a browser publishable key in the apikey header. Keep service-role keys on the server. The backend must allow the frontend origin via CORS, including OPTIONS, Content-Type and apikey. Use synthetic records for the demo. If your function requires user JWTs, provide the auth flow for integration.
+The deployed project is Rafehs Org / supa-soda-hackathon (dbloynewlgozjpqgkyft).
+The gateway base URL is https://dbloynewlgozjpqgkyft.supabase.co/functions/v1/fhirguard.
+The frontend reads VITE_SUPABASE_URL, VITE_SUPABASE_PUBLISHABLE_KEY and VITE_GATEWAY_URL at build time. Keep server credentials on the server.
 
-The proposed API returns JSON:
-- POST /validate receives {"raw":"<FHIR JSON string>"} and returns the persisted event. Return HTTP 200 for completed checks including quarantine. Preserve the raw string so malformed submissions can be audited.
-- GET /dashboard returns {"events":[...],"score":null} with all demo events newest first. Supply the actual numeric Sodabase schema score when available.
-- POST /ingest receives {} and returns {} after a batch is committed. The frontend then refreshes the dashboard.
+## Try the full flow
+Import the Patient example, then Observation, then Broken reference. The first two are accepted and the third is quarantined with the exact missing reference. Reload the dashboard to verify persistence. Run demo batch inserts these same three synthetic fixtures.
 
-Example event:
-```json
-{"eventId":"evt-003","time":"2026-11-04T18:00:00Z","type":"Observation","resourceId":"obs-002","raw":"{\"resourceType\":\"Observation\"}","structure":"passed","integrity":"failed","outcome":"quarantined","issues":[{"stage":"integrity","path":"subject.reference","message":"Patient/missing-404 does not resolve to an accepted local Patient."}]}
-```
-The raw field should contain the full original payload. Valid structure values are passed or failed. Integrity may also be skipped. Outcome is accepted or quarantined. Successful checks use an empty issues array. For the demo, scope all three routes to the same test workspace. Share one accepted and one quarantined response, dashboard JSON, and the function URL to verify the integration.
+JSON upload and URL import both load an editable preview. Validate & import submits each resource to the gateway. Single resources and collection/searchset Bundles are supported, with a limit of 1 MiB and 100 resources. Patients are submitted first. URL previews currently accept direct HTTPS JSON from hapi.fhir.org (R4 Patient/Observation endpoints) and raw.githubusercontent.com, with redirects disabled. Only the current search-result page is loaded.
 
-## URL import and file upload
-The Validator offers JSON upload and From link. Both load an editable preview before Validate & import is pressed. Selecting a file or loading a URL creates no ingestion events. Editing the preview marks its source as manual.
+Manual and uploaded records share the uploads source scope. URL records use their HTTPS origin as source scope. Observations resolve Patient/id references within that scope. Imported Bundle fullUrl/urn references, profiles, terminology binding and full FHIRPath validation remain outside this MVP's bounded checks.
 
-Inputs may be a single resource or a collection/searchset Bundle. Limits are 1 MiB and 100 resources. Only the current search-result page is loaded. Patients are submitted before other resources so local Patient/id references can resolve. Bundle fullUrl/urn reference resolution and transaction semantics are outside the demo's current scope. Each resource has its own outcome. Invalid JSON can be submitted and quarantined. Invalid Bundle envelopes are rejected before submission.
+## Gateway routes
+Requests carry the project's publishable key in the apikey header. This identifies the shared demo application. It is not individual-user authentication. Use synthetic data in this workspace.
 
-The frontend sends one POST /validate per resource, adding source metadata:
-- File upload uses {"kind":"file","name":"records.json"}.
-- URL import uses {"kind":"url","name":"https://example.org/resources.json"}.
-- Pasted or edited JSON uses {"kind":"manual","name":"Edited JSON"}.
+- GET /dashboard returns the latest 100 events, totals across all events, and score: null until Sodabase integration is provided.
+- POST /validate receives raw (original JSON text), optional source ({kind: manual|file|url, name: string}), and optional requestId (UUID). It returns the persisted event, including failures. Malformed JSON is retained in quarantine.
+- POST /fetch-url receives {url} and returns {raw} for preview without inserting anything. Fetches use an 8-second timeout and a 1 MiB response limit.
+- POST /ingest inserts the three synthetic demo fixtures and returns {events}.
 
-Persist and return the optional source field on each event so history retains provenance. Existing events without source remain supported. Counters measure events, including retries. Import is sequential and may partially succeed. On transport failure the UI stops and shows how many responses were confirmed. Check history before retrying. The backend must deduplicate/upsert trusted resources using source and resource identity, while retaining submission events.
+An event includes eventId, time, raw, type, resourceId, source, structure (passed|failed), integrity (passed|failed|skipped), outcome (accepted|quarantined), and issues ([{stage,path,message}]).
+Counts measure submission events. Accepted resources are upserted by source scope and resource ID. Reusing a requestId with the same content returns the original event. Reusing it with different content returns HTTP 409.
 
-### Additional endpoint for the backend
-POST /fetch-url receives {"url":"https://..."} and returns {"raw":"<original JSON text>"} for preview only. It must not persist records. Restrict sources to an approved HTTPS host allowlist, reject credentials and redirects, block private/loopback/link-local addresses including resolved addresses, limit the response to 1 MiB and use a timeout shorter than the frontend's 15 seconds. Do not forward browser or service credentials to the source. Return a non-2xx status on fetch failure. The existing validation endpoint remains the only insertion path.
+Imports are sequential and may partially complete. The frontend stops on transport failure and refreshes history. Check history before manually retrying. Each record's reference check, accepted resource write, event and issues commit in one database transaction. The Observation foreign key also enforces patient-reference integrity.
 
-In local demo mode the browser fetches the URL directly with credentials omitted and a 15-second timeout. The source must enable CORS and return JSON without redirects. In gateway mode /fetch-url handles the fetch. A generic webpage URL will fail JSON parsing. Live gateway support remains dependent on these backend endpoints.
+## Backend implementation
+supabase/functions/fhirguard/index.ts is the deployed Edge Function. Shared rules live in supabase/functions/_shared, with root re-exports used by the frontend. The function verifies the apikey against the environment's project publishable keys. verify_jwt is false because these keys are not JWTs; authentication occurs inside the handler. Server database requests use Supabase's provisioned secret key or legacy service-role fallback.
 
-## Connected Supabase project
-The published frontend is configured for Rafehs Org / supa-soda-hackathon, project ref dbloynewlgozjpqgkyft. The project currently has no public tables or deployed Edge Functions (checked November 4, 2026).
+CORS allows the private Site and localhost ports 5173/5174. Other frontend origins must be added deliberately. URL fetching forwards no caller credentials and uses a fixed trusted-host allowlist.
 
-For a local checkout, copy .env.example to .env.local and fill in the existing Supabase publishable key from the project's API settings. Vite includes these public values at build time. Run npm run dev, or npm run build for deployment. The local .env.local is ignored by Git.
+supabase/schema.sql defines the initial public ingestion_events, patients, observations, validation_issues tables and the two gateway RPCs. It has already been applied to this project. RLS is enabled and browser roles have no direct table or RPC privileges. Only the gateway's service role can use them. The [RLS-with-no-policies informational advisory](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) is intentional for these service-only tables.
 
-When VITE_SUPABASE_URL is configured, the frontend checks GET /auth/v1/settings using the publishable key. A successful check confirms browser access to the project's API; it does not validate the application schema, ingestion routes or row policies. With VITE_GATEWAY_URL empty, the interface shows Backend in progress, permits input previews, and disables import and ingestion actions. Metrics remain unavailable. Failed checks display an error with a Recheck connection action. There is no automatic switch to demo records after a connection failure.
+The project also contains an independently populated fhirguard schema (sources, resources, import_runs, validation_runs, resource_validation). The interactive gateway currently uses the public tables above. Its dashboard totals cover gateway events, and do not include that existing dataset. Coordinate the data-model integration with the backend owner before combining the two flows.
 
-When the backend is ready, set VITE_GATEWAY_URL to the deployed gateway base URL, then rebuild. The frontend checks /dashboard before enabling import. The backend should implement the routes documented above and enforce its chosen authorization and RLS rules. User JWT authentication will need to be integrated if your gateway requires signed-in users. Removing both URL variables enables the original session demo for rehearsals.
+## Verification and deployment
+npm test covers the shared validation and import handling. python3 scripts/verify-gateway.py checks the live API using .env.local and creates synthetic verification events. It verifies persistence, quarantine, replay/conflict behavior, API-key authentication, URL restrictions and HAPI previews.
+
+Deploy the three function source files together, preserving the fhirguard and _shared paths, with name fhirguard and verify_jwt=false. Rebuild the frontend after environment changes. The SQL is an initial setup script; it intentionally fails if those tables already exist.
+
+The original browser-session demo remains available by clearing both VITE_SUPABASE_URL and VITE_GATEWAY_URL before building.

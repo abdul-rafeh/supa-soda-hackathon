@@ -13,7 +13,10 @@ async function request(path,body){
  const res=await fetch(base+path,{method:body?'POST':'GET',headers:{...(body?{'Content-Type':'application/json'}:{}),...(publishableKey?{apikey:publishableKey}:{})},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(15000)});
  if (res.status === 404) throw Error('Backend endpoint is not deployed yet.');
  if (res.status === 401 || res.status === 403) throw Error('Gateway access is not ready. Check the backend authentication setup.');
- if(!res.ok)throw Error('Gateway returned HTTP '+res.status);
+ if (!res.ok) {
+  const error = await res.json().catch(() => ({}));
+  throw Error(error.error || 'Gateway returned HTTP ' + res.status);
+ }
  return res.json();
 }
 function checkEvent(e){
@@ -41,7 +44,7 @@ export async function snapshot() {
  return { ...data, connection: 'connected', backend: 'ready' };
 }
 export async function submit(raw, source){
- if(live)return checkEvent(await request('/validate',{raw,source}));
+ if(live)return checkEvent(await request('/validate',{raw,source,requestId:crypto.randomUUID()}));
  const result={...evaluate(raw,localEvents),source};localEvents.unshift(result);return result;
 }
 export async function ingest(){

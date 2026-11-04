@@ -66,7 +66,7 @@ export default function SourceInput({ busy, canImport, onSubmit }) {
         <label htmlFor="source-url">FHIR JSON URL</label>
         <input id="source-url" type="url" placeholder="https://hapi.fhir.org/baseR4/Patient?_count=5" value={url} disabled={disabled} onChange={event => setUrl(event.target.value)} />
         <button className="secondary" disabled={disabled || !url.trim()} onClick={readUrl}>{loading ? 'Loading…' : 'Load preview'}</button>
-        <p className="inputHint">{gatewayConfigured ? 'The gateway fetches the URL for preview.' : 'Preview links must allow browser access (CORS).'} Search results import the current page only.</p>
+        <p className="inputHint">{gatewayConfigured ? 'Sources supported by the gateway: HAPI FHIR and raw GitHub JSON.' : 'Preview links must allow browser access (CORS).'} Search results import the current page only.</p>
       </div>}
       {error && <p role="alert" className="issue">{error} The preview below has not changed.</p>}
       <div className="examples" aria-label="Examples">{['Patient', 'Observation', 'Broken reference'].map((name, index) => <button key={name} disabled={disabled} onClick={() => load(JSON.stringify(fixtures[index], null, 2), { kind: 'manual', name: name + ' example' })}>{name}</button>)}</div>
