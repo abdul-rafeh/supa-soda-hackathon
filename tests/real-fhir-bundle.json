@@ -1,0 +1,1729 @@
+{
+  "resourceType": "Bundle",
+  "id": "mimic-real-fhir-sample",
+  "type": "collection",
+  "entry": [
+    {
+      "resource": {
+        "id": "ee172322-118b-5716-abbc-18e4c5437e15",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-organization"
+          ]
+        },
+        "name": "Beth Israel Deaconess Medical Center",
+        "type": [
+          {
+            "coding": [
+              {
+                "code": "prov",
+                "system": "http://terminology.hl7.org/CodeSystem/organization-type",
+                "display": "Healthcare Provider"
+              }
+            ]
+          }
+        ],
+        "active": true,
+        "identifier": [
+          {
+            "value": "1194052720",
+            "system": "http://hl7.org/fhir/sid/us-npi"
+          }
+        ],
+        "resourceType": "Organization"
+      }
+    },
+    {
+      "resource": {
+        "id": "0483cba3-574b-58e3-a6a1-2eec0f3b707a",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-location"
+          ]
+        },
+        "name": "Med/Surg",
+        "status": "active",
+        "physicalType": {
+          "coding": [
+            {
+              "code": "wa",
+              "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+              "display": "Ward"
+            }
+          ]
+        },
+        "resourceType": "Location",
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "501cd59a-cd8a-5f98-8298-2ca9c897d59f",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-location"
+          ]
+        },
+        "name": "Emergency Department",
+        "status": "active",
+        "physicalType": {
+          "coding": [
+            {
+              "code": "wa",
+              "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+              "display": "Ward"
+            }
+          ]
+        },
+        "resourceType": "Location",
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "77b3f959-fa2c-5599-8713-a86815b29a4a",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-location"
+          ]
+        },
+        "name": "Medical Intensive Care Unit (MICU)",
+        "status": "active",
+        "physicalType": {
+          "coding": [
+            {
+              "code": "wa",
+              "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+              "display": "Ward"
+            }
+          ]
+        },
+        "resourceType": "Location",
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "7fabe959-1cae-5f68-a720-27c2975f8ec8",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-location"
+          ]
+        },
+        "name": "Cardiac Vascular Intensive Care Unit (CVICU)",
+        "status": "active",
+        "physicalType": {
+          "coding": [
+            {
+              "code": "wa",
+              "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+              "display": "Ward"
+            }
+          ]
+        },
+        "resourceType": "Location",
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "9152585d-31b9-50ca-9476-a4db49030917",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-location"
+          ]
+        },
+        "name": "Transplant",
+        "status": "active",
+        "physicalType": {
+          "coding": [
+            {
+              "code": "wa",
+              "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+              "display": "Ward"
+            }
+          ]
+        },
+        "resourceType": "Location",
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "d4b315bc-5e39-5162-9d5c-dada4294b1a9",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-location"
+          ]
+        },
+        "name": "PACU",
+        "status": "active",
+        "physicalType": {
+          "coding": [
+            {
+              "code": "wa",
+              "system": "http://terminology.hl7.org/CodeSystem/location-physical-type",
+              "display": "Ward"
+            }
+          ]
+        },
+        "resourceType": "Location",
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "0a8eebfd-a352-522e-89f0-1d4a13abdebc",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-patient"
+          ]
+        },
+        "name": [
+          {
+            "use": "official",
+            "family": "Patient_10000032"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2128-05-06",
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "code": "2106-3",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "White"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "White"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "code": "2186-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Not Hispanic or Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "Not Hispanic or Latino"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "F"
+          }
+        ],
+        "identifier": [
+          {
+            "value": "10000032",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/patient"
+          }
+        ],
+        "resourceType": "Patient",
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "code": "en",
+                  "system": "urn:ietf:bcp:47"
+                }
+              ]
+            }
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "code": "W",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"
+            }
+          ]
+        },
+        "deceasedDateTime": "2180-09-09",
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "0c2243d2-987b-5cbd-8eb1-170a80647693",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-patient"
+          ]
+        },
+        "name": [
+          {
+            "use": "official",
+            "family": "Patient_10005866"
+          }
+        ],
+        "gender": "male",
+        "birthDate": "2089-06-05",
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "code": "2106-3",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "White"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "White"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "code": "2186-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Not Hispanic or Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "Not Hispanic or Latino"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "M"
+          }
+        ],
+        "identifier": [
+          {
+            "value": "10005866",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/patient"
+          }
+        ],
+        "resourceType": "Patient",
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "code": "en",
+                  "system": "urn:ietf:bcp:47"
+                }
+              ]
+            }
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "code": "S",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"
+            }
+          ]
+        },
+        "deceasedDateTime": "2149-11-21",
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "158f3a39-e3d7-5e7a-93aa-57af894aadd9",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-patient"
+          ]
+        },
+        "name": [
+          {
+            "use": "official",
+            "family": "Patient_10005909"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "2104-10-28",
+        "extension": [
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-race",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "code": "2106-3",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "White"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "White"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-ethnicity",
+            "extension": [
+              {
+                "url": "ombCategory",
+                "valueCoding": {
+                  "code": "2186-5",
+                  "system": "urn:oid:2.16.840.1.113883.6.238",
+                  "display": "Not Hispanic or Latino"
+                }
+              },
+              {
+                "url": "text",
+                "valueString": "Not Hispanic or Latino"
+              }
+            ]
+          },
+          {
+            "url": "http://hl7.org/fhir/us/core/StructureDefinition/us-core-birthsex",
+            "valueCode": "F"
+          }
+        ],
+        "identifier": [
+          {
+            "value": "10005909",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/patient"
+          }
+        ],
+        "resourceType": "Patient",
+        "communication": [
+          {
+            "language": {
+              "coding": [
+                {
+                  "code": "en",
+                  "system": "urn:ietf:bcp:47"
+                }
+              ]
+            }
+          }
+        ],
+        "maritalStatus": {
+          "coding": [
+            {
+              "code": "M",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-MaritalStatus"
+            }
+          ]
+        },
+        "managingOrganization": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "47f1f4fc-e2be-5e4d-922a-de9ba718e703",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-encounter"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "code": "308335008",
+                "system": "http://snomed.info/sct",
+                "display": "Patient encounter procedure"
+              }
+            ]
+          }
+        ],
+        "class": {
+          "code": "OBSENC",
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "display": "observation encounter"
+        },
+        "period": {
+          "end": "2149-09-26T15:05:00-04:00",
+          "start": "2149-09-20T14:30:00-04:00"
+        },
+        "status": "finished",
+        "subject": {
+          "reference": "Patient/0c2243d2-987b-5cbd-8eb1-170a80647693"
+        },
+        "location": [
+          {
+            "period": {
+              "end": "2149-09-20T15:53:00-04:00",
+              "start": "2149-09-20T05:50:00-04:00"
+            },
+            "location": {
+              "reference": "Location/501cd59a-cd8a-5f98-8298-2ca9c897d59f"
+            }
+          },
+          {
+            "period": {
+              "end": "2149-09-26T15:07:34-04:00",
+              "start": "2149-09-20T15:53:00-04:00"
+            },
+            "location": {
+              "reference": "Location/9152585d-31b9-50ca-9476-a4db49030917"
+            }
+          }
+        ],
+        "priority": {
+          "coding": [
+            {
+              "code": "R",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActPriority",
+              "display": "routine"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "value": "21636229",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/encounter-hosp",
+            "assigner": {
+              "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+            }
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "code": "SURG",
+              "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-services"
+            }
+          ]
+        },
+        "resourceType": "Encounter",
+        "hospitalization": {
+          "admitSource": {
+            "coding": [
+              {
+                "code": "EMERGENCY ROOM",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-admit-source"
+              }
+            ]
+          },
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "code": "HOME",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-discharge-disposition"
+              }
+            ]
+          }
+        },
+        "serviceProvider": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "4bf70b2e-29af-5519-8752-052b2f833a81",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-encounter"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "code": "308335008",
+                "system": "http://snomed.info/sct",
+                "display": "Patient encounter procedure"
+              }
+            ]
+          }
+        ],
+        "class": {
+          "code": "OBSENC",
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "display": "observation encounter"
+        },
+        "period": {
+          "end": "2144-11-02T15:23:00-05:00",
+          "start": "2144-10-28T23:20:00-04:00"
+        },
+        "status": "finished",
+        "subject": {
+          "reference": "Patient/158f3a39-e3d7-5e7a-93aa-57af894aadd9"
+        },
+        "location": [
+          {
+            "period": {
+              "end": "2144-10-29T00:10:00-04:00",
+              "start": "2144-10-28T18:29:00-04:00"
+            },
+            "location": {
+              "reference": "Location/501cd59a-cd8a-5f98-8298-2ca9c897d59f"
+            }
+          },
+          {
+            "period": {
+              "end": "2144-10-29T09:16:41-04:00",
+              "start": "2144-10-29T00:10:00-04:00"
+            },
+            "location": {
+              "reference": "Location/0483cba3-574b-58e3-a6a1-2eec0f3b707a"
+            }
+          },
+          {
+            "period": {
+              "end": "2144-10-29T12:05:08-04:00",
+              "start": "2144-10-29T09:16:41-04:00"
+            },
+            "location": {
+              "reference": "Location/0483cba3-574b-58e3-a6a1-2eec0f3b707a"
+            }
+          },
+          {
+            "period": {
+              "end": "2144-10-29T23:09:03-04:00",
+              "start": "2144-10-29T12:05:08-04:00"
+            },
+            "location": {
+              "reference": "Location/d4b315bc-5e39-5162-9d5c-dada4294b1a9"
+            }
+          },
+          {
+            "period": {
+              "end": "2144-10-30T18:52:43-04:00",
+              "start": "2144-10-29T23:09:03-04:00"
+            },
+            "location": {
+              "reference": "Location/7fabe959-1cae-5f68-a720-27c2975f8ec8"
+            }
+          },
+          {
+            "period": {
+              "end": "2144-11-02T15:24:29-05:00",
+              "start": "2144-10-30T18:52:43-04:00"
+            },
+            "location": {
+              "reference": "Location/7fabe959-1cae-5f68-a720-27c2975f8ec8"
+            }
+          }
+        ],
+        "priority": {
+          "coding": [
+            {
+              "code": "R",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActPriority",
+              "display": "routine"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "value": "20199380",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/encounter-hosp",
+            "assigner": {
+              "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+            }
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "code": "VSURG",
+              "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-services"
+            }
+          ]
+        },
+        "resourceType": "Encounter",
+        "hospitalization": {
+          "admitSource": {
+            "coding": [
+              {
+                "code": "EMERGENCY ROOM",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-admit-source"
+              }
+            ]
+          },
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "code": "HOME",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-discharge-disposition"
+              }
+            ]
+          }
+        },
+        "serviceProvider": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "8a5be724-d9d4-5a47-8a39-4a274662f766",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-encounter"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "code": "308335008",
+                "system": "http://snomed.info/sct",
+                "display": "Patient encounter procedure"
+              }
+            ]
+          }
+        ],
+        "class": {
+          "code": "EMER",
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "display": "emergency"
+        },
+        "period": {
+          "end": "2180-07-25T17:55:00-04:00",
+          "start": "2180-07-23T12:35:00-04:00"
+        },
+        "status": "finished",
+        "subject": {
+          "reference": "Patient/0a8eebfd-a352-522e-89f0-1d4a13abdebc"
+        },
+        "location": [
+          {
+            "period": {
+              "end": "2180-07-23T05:54:00-04:00",
+              "start": "2180-07-22T16:24:00-04:00"
+            },
+            "location": {
+              "reference": "Location/501cd59a-cd8a-5f98-8298-2ca9c897d59f"
+            }
+          },
+          {
+            "period": {
+              "end": "2180-07-23T14:00:00-04:00",
+              "start": "2180-07-23T05:54:00-04:00"
+            },
+            "location": {
+              "reference": "Location/501cd59a-cd8a-5f98-8298-2ca9c897d59f"
+            }
+          },
+          {
+            "period": {
+              "end": "2180-07-23T23:50:47-04:00",
+              "start": "2180-07-23T14:00:00-04:00"
+            },
+            "location": {
+              "reference": "Location/77b3f959-fa2c-5599-8713-a86815b29a4a"
+            }
+          },
+          {
+            "period": {
+              "end": "2180-07-24T19:52:58-04:00",
+              "start": "2180-07-23T23:50:47-04:00"
+            },
+            "location": {
+              "reference": "Location/9152585d-31b9-50ca-9476-a4db49030917"
+            }
+          },
+          {
+            "period": {
+              "end": "2180-07-25T17:55:43-04:00",
+              "start": "2180-07-24T19:52:58-04:00"
+            },
+            "location": {
+              "reference": "Location/9152585d-31b9-50ca-9476-a4db49030917"
+            }
+          }
+        ],
+        "priority": {
+          "coding": [
+            {
+              "code": "EM",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActPriority",
+              "display": "emergency"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "value": "29079034",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/encounter-hosp",
+            "assigner": {
+              "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+            }
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "code": "MED",
+              "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-services"
+            }
+          ]
+        },
+        "resourceType": "Encounter",
+        "hospitalization": {
+          "admitSource": {
+            "coding": [
+              {
+                "code": "EMERGENCY ROOM",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-admit-source"
+              }
+            ]
+          },
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "code": "HOME",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-discharge-disposition"
+              }
+            ]
+          }
+        },
+        "serviceProvider": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "ae04a78b-4073-5c58-8903-d90c803c0422",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-encounter"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "code": "308335008",
+                "system": "http://snomed.info/sct",
+                "display": "Patient encounter procedure"
+              }
+            ]
+          }
+        ],
+        "class": {
+          "code": "EMER",
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "display": "emergency"
+        },
+        "period": {
+          "end": "2146-06-09T16:45:00-04:00",
+          "start": "2146-06-06T00:50:00-04:00"
+        },
+        "status": "finished",
+        "subject": {
+          "reference": "Patient/0c2243d2-987b-5cbd-8eb1-170a80647693"
+        },
+        "location": [
+          {
+            "period": {
+              "end": "2146-06-06T01:45:00-04:00",
+              "start": "2146-06-05T22:26:00-04:00"
+            },
+            "location": {
+              "reference": "Location/501cd59a-cd8a-5f98-8298-2ca9c897d59f"
+            }
+          },
+          {
+            "period": {
+              "end": "2146-06-08T06:54:08-04:00",
+              "start": "2146-06-06T01:45:00-04:00"
+            },
+            "location": {
+              "reference": "Location/9152585d-31b9-50ca-9476-a4db49030917"
+            }
+          },
+          {
+            "period": {
+              "end": "2146-06-09T16:56:16-04:00",
+              "start": "2146-06-08T06:54:08-04:00"
+            },
+            "location": {
+              "reference": "Location/9152585d-31b9-50ca-9476-a4db49030917"
+            }
+          }
+        ],
+        "priority": {
+          "coding": [
+            {
+              "code": "EM",
+              "system": "http://terminology.hl7.org/CodeSystem/v3-ActPriority",
+              "display": "emergency"
+            }
+          ]
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "value": "26158160",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/encounter-hosp",
+            "assigner": {
+              "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+            }
+          }
+        ],
+        "serviceType": {
+          "coding": [
+            {
+              "code": "SURG",
+              "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-services"
+            }
+          ]
+        },
+        "resourceType": "Encounter",
+        "hospitalization": {
+          "admitSource": {
+            "coding": [
+              {
+                "code": "EMERGENCY ROOM",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-admit-source"
+              }
+            ]
+          },
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "code": "HOME",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-discharge-disposition"
+              }
+            ]
+          }
+        },
+        "serviceProvider": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "00934dbb-5139-57fe-aca5-e26de86605c4",
+        "code": {
+          "coding": [
+            {
+              "code": "V462",
+              "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd9",
+              "display": "Other dependence on machines, supplemental oxygen"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-condition"
+          ]
+        },
+        "subject": {
+          "reference": "Patient/0a8eebfd-a352-522e-89f0-1d4a13abdebc"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "encounter-diagnosis",
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/8a5be724-d9d4-5a47-8a39-4a274662f766"
+        },
+        "resourceType": "Condition"
+      }
+    },
+    {
+      "resource": {
+        "id": "23635dea-2293-5185-9522-f9d6a9d05988",
+        "code": {
+          "coding": [
+            {
+              "code": "07054",
+              "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd9",
+              "display": "Chronic hepatitis C without mention of hepatic coma"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-condition"
+          ]
+        },
+        "subject": {
+          "reference": "Patient/0c2243d2-987b-5cbd-8eb1-170a80647693"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "encounter-diagnosis",
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/ae04a78b-4073-5c58-8903-d90c803c0422"
+        },
+        "resourceType": "Condition"
+      }
+    },
+    {
+      "resource": {
+        "id": "a82cc557-57aa-56fe-9c40-f5cb3b164f8b",
+        "code": {
+          "coding": [
+            {
+              "code": "Y92234",
+              "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-diagnosis-icd10",
+              "display": "Operating room of hospital as the place of occurrence of the external cause"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-condition"
+          ]
+        },
+        "subject": {
+          "reference": "Patient/158f3a39-e3d7-5e7a-93aa-57af894aadd9"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "encounter-diagnosis",
+                "system": "http://terminology.hl7.org/CodeSystem/condition-category",
+                "display": "Encounter Diagnosis"
+              }
+            ]
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/4bf70b2e-29af-5519-8752-052b2f833a81"
+        },
+        "resourceType": "Condition"
+      }
+    },
+    {
+      "resource": {
+        "id": "0949507a-75df-58b0-80ef-8e5f86ec99ea",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-encounter"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "code": "308335008",
+                "system": "http://snomed.info/sct",
+                "display": "Patient encounter procedure"
+              }
+            ]
+          }
+        ],
+        "class": {
+          "code": "EMER",
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "display": "emergency"
+        },
+        "partOf": {
+          "reference": "Encounter/8a5be724-d9d4-5a47-8a39-4a274662f766"
+        },
+        "period": {
+          "end": "2180-07-23T05:54:00-04:00",
+          "start": "2180-07-22T16:24:00-04:00"
+        },
+        "status": "finished",
+        "subject": {
+          "reference": "Patient/0a8eebfd-a352-522e-89f0-1d4a13abdebc"
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "value": "32952584",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/encounter-ed",
+            "assigner": {
+              "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+            }
+          }
+        ],
+        "resourceType": "Encounter",
+        "hospitalization": {
+          "admitSource": {
+            "coding": [
+              {
+                "code": "AMBULANCE",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-admit-source"
+              }
+            ]
+          },
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "code": "HOME",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-discharge-disposition"
+              }
+            ]
+          }
+        },
+        "serviceProvider": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "abbd935e-e46a-56cd-a609-3d9be0c646ba",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-encounter"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "code": "308335008",
+                "system": "http://snomed.info/sct",
+                "display": "Patient encounter procedure"
+              }
+            ]
+          }
+        ],
+        "class": {
+          "code": "EMER",
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "display": "emergency"
+        },
+        "partOf": {
+          "reference": "Encounter/4bf70b2e-29af-5519-8752-052b2f833a81"
+        },
+        "period": {
+          "end": "2144-10-29T00:10:00-04:00",
+          "start": "2144-10-28T18:29:00-04:00"
+        },
+        "status": "finished",
+        "subject": {
+          "reference": "Patient/158f3a39-e3d7-5e7a-93aa-57af894aadd9"
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "value": "32719751",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/encounter-ed",
+            "assigner": {
+              "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+            }
+          }
+        ],
+        "resourceType": "Encounter",
+        "hospitalization": {
+          "admitSource": {
+            "coding": [
+              {
+                "code": "AMBULANCE",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-admit-source"
+              }
+            ]
+          },
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "code": "ADMITTED",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-discharge-disposition"
+              }
+            ]
+          }
+        },
+        "serviceProvider": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "d983bfec-40ae-59cd-86ad-20783ec5ef43",
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-encounter"
+          ]
+        },
+        "type": [
+          {
+            "coding": [
+              {
+                "code": "308335008",
+                "system": "http://snomed.info/sct",
+                "display": "Patient encounter procedure"
+              }
+            ]
+          }
+        ],
+        "class": {
+          "code": "EMER",
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "display": "emergency"
+        },
+        "partOf": {
+          "reference": "Encounter/47f1f4fc-e2be-5e4d-922a-de9ba718e703"
+        },
+        "period": {
+          "end": "2149-09-20T15:53:00-04:00",
+          "start": "2149-09-20T05:50:00-04:00"
+        },
+        "status": "finished",
+        "subject": {
+          "reference": "Patient/0c2243d2-987b-5cbd-8eb1-170a80647693"
+        },
+        "identifier": [
+          {
+            "use": "usual",
+            "value": "30225689",
+            "system": "http://mimic.mit.edu/fhir/mimic/identifier/encounter-ed",
+            "assigner": {
+              "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+            }
+          }
+        ],
+        "resourceType": "Encounter",
+        "hospitalization": {
+          "admitSource": {
+            "coding": [
+              {
+                "code": "WALK IN",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-admit-source"
+              }
+            ]
+          },
+          "dischargeDisposition": {
+            "coding": [
+              {
+                "code": "ADMITTED",
+                "system": "http://mimic.mit.edu/fhir/mimic/CodeSystem/mimic-discharge-disposition"
+              }
+            ]
+          }
+        },
+        "serviceProvider": {
+          "reference": "Organization/ee172322-118b-5716-abbc-18e4c5437e15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "id": "31872a51-b2f1-575a-b9a2-80ef1ab9bfb4",
+        "code": {
+          "coding": [
+            {
+              "code": "410188000",
+              "system": "http://snomed.info/sct",
+              "display": "Taking patient vital signs assessment (procedure)"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-procedure-ed"
+          ]
+        },
+        "status": "completed",
+        "subject": {
+          "reference": "Patient/0a8eebfd-a352-522e-89f0-1d4a13abdebc"
+        },
+        "encounter": {
+          "reference": "Encounter/0949507a-75df-58b0-80ef-8e5f86ec99ea"
+        },
+        "resourceType": "Procedure",
+        "performedDateTime": "2180-07-22T19:47:00-04:00"
+      }
+    },
+    {
+      "resource": {
+        "id": "96b8b035-276f-5156-973d-89ecfa5aa3f0",
+        "code": {
+          "coding": [
+            {
+              "code": "410188000",
+              "system": "http://snomed.info/sct",
+              "display": "Taking patient vital signs assessment (procedure)"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-procedure-ed"
+          ]
+        },
+        "status": "completed",
+        "subject": {
+          "reference": "Patient/158f3a39-e3d7-5e7a-93aa-57af894aadd9"
+        },
+        "encounter": {
+          "reference": "Encounter/abbd935e-e46a-56cd-a609-3d9be0c646ba"
+        },
+        "resourceType": "Procedure",
+        "performedDateTime": "2144-10-28T23:33:00-04:00"
+      }
+    },
+    {
+      "resource": {
+        "id": "ad770bc5-4526-5bb5-b763-cc2f80fde491",
+        "code": {
+          "coding": [
+            {
+              "code": "410188000",
+              "system": "http://snomed.info/sct",
+              "display": "Taking patient vital signs assessment (procedure)"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-procedure-ed"
+          ]
+        },
+        "status": "completed",
+        "subject": {
+          "reference": "Patient/0c2243d2-987b-5cbd-8eb1-170a80647693"
+        },
+        "encounter": {
+          "reference": "Encounter/d983bfec-40ae-59cd-86ad-20783ec5ef43"
+        },
+        "resourceType": "Procedure",
+        "performedDateTime": "2149-09-20T11:39:00-04:00"
+      }
+    },
+    {
+      "resource": {
+        "id": "2d219b4e-cb0c-5cbf-b91a-01e61a6afb4d",
+        "code": {
+          "coding": [
+            {
+              "code": "2708-6",
+              "system": "http://loinc.org",
+              "display": "Oxygen saturation in Arterial blood"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-observation-vital-signs"
+          ]
+        },
+        "partOf": [
+          {
+            "reference": "Procedure/ad770bc5-4526-5bb5-b763-cc2f80fde491"
+          }
+        ],
+        "status": "final",
+        "subject": {
+          "reference": "Patient/0c2243d2-987b-5cbd-8eb1-170a80647693"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "vital-signs",
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "display": "Vital Signs"
+              }
+            ]
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/d983bfec-40ae-59cd-86ad-20783ec5ef43"
+        },
+        "resourceType": "Observation",
+        "valueQuantity": {
+          "code": "%",
+          "unit": "%",
+          "value": 99,
+          "system": "http://unitsofmeasure.org"
+        },
+        "effectiveDateTime": "2149-09-20T11:39:00-04:00"
+      }
+    },
+    {
+      "resource": {
+        "id": "6d25ed2e-6dab-5cf3-9688-2bb03e83a533",
+        "code": {
+          "coding": [
+            {
+              "code": "85354-9",
+              "system": "http://loinc.org",
+              "display": "Blood pressure panel with all children optional"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-observation-vital-signs"
+          ]
+        },
+        "partOf": [
+          {
+            "reference": "Procedure/96b8b035-276f-5156-973d-89ecfa5aa3f0"
+          }
+        ],
+        "status": "final",
+        "subject": {
+          "reference": "Patient/158f3a39-e3d7-5e7a-93aa-57af894aadd9"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "vital-signs",
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "display": "Vital Signs"
+              }
+            ]
+          }
+        ],
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "code": "8480-6",
+                  "system": "http://loinc.org",
+                  "display": "Systolic blood pressure"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "code": "mm[Hg]",
+              "unit": "mm[Hg]",
+              "value": 120,
+              "system": "http://unitsofmeasure.org"
+            }
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "code": "8462-4",
+                  "system": "http://loinc.org",
+                  "display": "Diastolic blood pressure"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "code": "mm[Hg]",
+              "unit": "mm[Hg]",
+              "value": 67,
+              "system": "http://unitsofmeasure.org"
+            }
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/abbd935e-e46a-56cd-a609-3d9be0c646ba"
+        },
+        "resourceType": "Observation",
+        "effectiveDateTime": "2144-10-28T23:33:00-04:00"
+      }
+    },
+    {
+      "resource": {
+        "id": "78855e68-1db6-5e9b-a586-bea3b0cca75b",
+        "code": {
+          "coding": [
+            {
+              "code": "85354-9",
+              "system": "http://loinc.org",
+              "display": "Blood pressure panel with all children optional"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-observation-vital-signs"
+          ]
+        },
+        "partOf": [
+          {
+            "reference": "Procedure/ad770bc5-4526-5bb5-b763-cc2f80fde491"
+          }
+        ],
+        "status": "final",
+        "subject": {
+          "reference": "Patient/0c2243d2-987b-5cbd-8eb1-170a80647693"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "vital-signs",
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "display": "Vital Signs"
+              }
+            ]
+          }
+        ],
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "code": "8480-6",
+                  "system": "http://loinc.org",
+                  "display": "Systolic blood pressure"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "code": "mm[Hg]",
+              "unit": "mm[Hg]",
+              "value": 165,
+              "system": "http://unitsofmeasure.org"
+            }
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "code": "8462-4",
+                  "system": "http://loinc.org",
+                  "display": "Diastolic blood pressure"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "code": "mm[Hg]",
+              "unit": "mm[Hg]",
+              "value": 75,
+              "system": "http://unitsofmeasure.org"
+            }
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/d983bfec-40ae-59cd-86ad-20783ec5ef43"
+        },
+        "resourceType": "Observation",
+        "effectiveDateTime": "2149-09-20T11:39:00-04:00"
+      }
+    },
+    {
+      "resource": {
+        "id": "b1887fd1-0da0-53b5-a9f3-03b2c3061561",
+        "code": {
+          "coding": [
+            {
+              "code": "85354-9",
+              "system": "http://loinc.org",
+              "display": "Blood pressure panel with all children optional"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-observation-vital-signs"
+          ]
+        },
+        "partOf": [
+          {
+            "reference": "Procedure/31872a51-b2f1-575a-b9a2-80ef1ab9bfb4"
+          }
+        ],
+        "status": "final",
+        "subject": {
+          "reference": "Patient/0a8eebfd-a352-522e-89f0-1d4a13abdebc"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "vital-signs",
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "display": "Vital Signs"
+              }
+            ]
+          }
+        ],
+        "component": [
+          {
+            "code": {
+              "coding": [
+                {
+                  "code": "8480-6",
+                  "system": "http://loinc.org",
+                  "display": "Systolic blood pressure"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "code": "mm[Hg]",
+              "unit": "mm[Hg]",
+              "value": 81,
+              "system": "http://unitsofmeasure.org"
+            }
+          },
+          {
+            "code": {
+              "coding": [
+                {
+                  "code": "8462-4",
+                  "system": "http://loinc.org",
+                  "display": "Diastolic blood pressure"
+                }
+              ]
+            },
+            "valueQuantity": {
+              "code": "mm[Hg]",
+              "unit": "mm[Hg]",
+              "value": 38,
+              "system": "http://unitsofmeasure.org"
+            }
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/0949507a-75df-58b0-80ef-8e5f86ec99ea"
+        },
+        "resourceType": "Observation",
+        "effectiveDateTime": "2180-07-22T19:47:00-04:00"
+      }
+    },
+    {
+      "resource": {
+        "id": "bd0ac79b-a503-5b45-ae3c-b370a6b4051e",
+        "code": {
+          "coding": [
+            {
+              "code": "2708-6",
+              "system": "http://loinc.org",
+              "display": "Oxygen saturation in Arterial blood"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-observation-vital-signs"
+          ]
+        },
+        "partOf": [
+          {
+            "reference": "Procedure/31872a51-b2f1-575a-b9a2-80ef1ab9bfb4"
+          }
+        ],
+        "status": "final",
+        "subject": {
+          "reference": "Patient/0a8eebfd-a352-522e-89f0-1d4a13abdebc"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "vital-signs",
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "display": "Vital Signs"
+              }
+            ]
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/0949507a-75df-58b0-80ef-8e5f86ec99ea"
+        },
+        "resourceType": "Observation",
+        "valueQuantity": {
+          "code": "%",
+          "unit": "%",
+          "value": 98,
+          "system": "http://unitsofmeasure.org"
+        },
+        "effectiveDateTime": "2180-07-22T19:47:00-04:00"
+      }
+    },
+    {
+      "resource": {
+        "id": "c36429e8-63b3-5022-9abd-a4e9be38ba1a",
+        "code": {
+          "coding": [
+            {
+              "code": "2708-6",
+              "system": "http://loinc.org",
+              "display": "Oxygen saturation in Arterial blood"
+            }
+          ]
+        },
+        "meta": {
+          "profile": [
+            "http://mimic.mit.edu/fhir/mimic/StructureDefinition/mimic-observation-vital-signs"
+          ]
+        },
+        "partOf": [
+          {
+            "reference": "Procedure/96b8b035-276f-5156-973d-89ecfa5aa3f0"
+          }
+        ],
+        "status": "final",
+        "subject": {
+          "reference": "Patient/158f3a39-e3d7-5e7a-93aa-57af894aadd9"
+        },
+        "category": [
+          {
+            "coding": [
+              {
+                "code": "vital-signs",
+                "system": "http://terminology.hl7.org/CodeSystem/observation-category",
+                "display": "Vital Signs"
+              }
+            ]
+          }
+        ],
+        "encounter": {
+          "reference": "Encounter/abbd935e-e46a-56cd-a609-3d9be0c646ba"
+        },
+        "resourceType": "Observation",
+        "valueQuantity": {
+          "code": "%",
+          "unit": "%",
+          "value": 97,
+          "system": "http://unitsofmeasure.org"
+        },
+        "effectiveDateTime": "2144-10-28T23:33:00-04:00"
+      }
+    }
+  ]
+}
