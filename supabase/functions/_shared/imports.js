@@ -8,33 +8,6 @@ export function checkSize(raw) {
   return raw;
 }
 
-export function resourcesFrom(raw) {
-  checkSize(raw);
-  let document;
-  try {
-    document = JSON.parse(raw);
-  } catch {
-    // Preserve malformed payloads for the validator and audit trail.
-    return [raw];
-  }
-  if (document?.resourceType !== 'Bundle') return [raw];
-  if (!['collection', 'searchset'].includes(document.type)) {
-    throw new Error('Use a collection or searchset Bundle for this import.');
-  }
-  if (!Array.isArray(document.entry) || !document.entry.length) {
-    throw new Error('The Bundle has no resources to import.');
-  }
-  if (document.entry.length > MAX_RESOURCES) {
-    throw new Error('Import up to 100 resources at a time.');
-  }
-  if (document.entry.some(entry => !entry?.resource || typeof entry.resource !== 'object' || Array.isArray(entry.resource))) {
-    throw new Error('Every Bundle entry must contain a resource object.');
-  }
-  return document.entry.map(entry => entry.resource)
-    .sort((left, right) => Number(right.resourceType === 'Patient') - Number(left.resourceType === 'Patient'))
-    .map(resource => JSON.stringify(resource, null, 2));
-}
-
 export function sourceUrl(value) {
   let url;
   try { url = new URL(value.trim()); }

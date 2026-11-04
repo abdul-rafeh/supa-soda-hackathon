@@ -60,7 +60,7 @@ export default function SourceInput({ busy, canImport, onSubmit }) {
       {mode === 'JSON upload' ? <div className="sourceBox">
         <label htmlFor="json-file">Choose a JSON file</label>
         <input id="json-file" type="file" accept=".json,application/json,application/fhir+json" disabled={disabled} onChange={readFile} />
-        <p className="inputHint">Patient, Observation or collection/searchset Bundle · Up to 1 MiB and 100 resources.</p>
+        <p className="inputHint">FHIR R4 resources or collection, searchset and create-only transaction Bundles · Up to 1 MiB and 100 resources.</p>
       </div> : <div className="sourceBox">
         <label htmlFor="source-url">FHIR JSON URL</label>
         <input id="source-url" type="url" placeholder="https://hapi.fhir.org/baseR4/Patient?_count=5" value={url} disabled={disabled} onChange={event => setUrl(event.target.value)} />
@@ -71,7 +71,8 @@ export default function SourceInput({ busy, canImport, onSubmit }) {
       <label htmlFor="payload">Preview or paste JSON</label>
       <p className="inputHint sourceName">Source · {source.name}</p>
       <textarea id="payload" spellCheck="false" value={raw} disabled={disabled} onChange={event => { setRaw(event.target.value); setSource({ kind: 'manual', name: 'Edited JSON' }); setError(''); }} />
-      <p className="inputHint">Previewing does not insert data. Import runs each resource through validation.</p>
+      <p className="inputHint">Check only saves nothing. Bundles are checked together and saved only if every resource passes. Transaction imports accept unconditional POST entries; updates and deletes are not supported.</p>
+      <button className="secondary" disabled={disabled || !canImport || !raw.trim()} onClick={() => onSubmit(raw, source, true)}>Check only</button>
       <button className="primary" disabled={disabled || !canImport || !raw.trim()} onClick={() => onSubmit(raw, source)}>{busy ? 'Working…' : canImport ? 'Validate & import' : 'Waiting for backend'}</button>
     </div>
   </section>;

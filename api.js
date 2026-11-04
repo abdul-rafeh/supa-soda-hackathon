@@ -1,4 +1,4 @@
-import { checkSize, resourcesFrom, sourceUrl } from './imports.js';
+import { checkSize, sourceUrl } from './imports.js';
 const env = import.meta.env || {};
 const base = (env.VITE_GATEWAY_URL || '').replace(/\/$/, '');
 const projectUrl = (env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
@@ -51,19 +51,12 @@ export async function fetchSource(value) {
  return {raw:checkSize(result.raw),url};
 }
 
-export async function importDocument(raw, source, onEvent) {
-  const resources = resourcesFrom(raw);
-  let completed = 0;
-  for (const resource of resources) {
-    let event;
-    try {
-      event = await submit(resource, source);
-    } catch (error) {
-      throw new Error(completed + ' of ' + resources.length + ' records confirmed. ' + error.message + '. Check history before retrying; the last request may have reached the gateway.');
-    }
-    completed++;
-    onEvent(event);
-  }
+export async function importDocument(raw, source, onEvent, dryRun = false) {
+  checkSize(raw);
+  const report = await request('/import', {raw, source, dryRun, requestId:crypto.randomUUID()});
+  if (!report || !Array.isArray(report.events) || !Array.isArray(report.issues) || typeof report.ok !== 'boolean') throw Error('Unexpected import response.');
+  report.events.forEach(event => onEvent(checkEvent(event)));
+  return report;
 }
 
 export async function quality() {

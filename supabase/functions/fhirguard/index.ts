@@ -1,3 +1,4 @@
+import { prepareBundle, resolveBundle } from '../_shared/bundles.js';
 import { sodabaseStatus } from '../_shared/sodabase.js';
 import { evaluate } from '../_shared/engine.js';
 import { checkSize, readJsonResponse, sourceUrl, MAX_BYTES } from '../_shared/imports.js';
@@ -101,6 +102,35 @@ async function persist(data) {
   return rpc('fhirguard_store_event', { p_event: event, p_resource: resource, p_scope: scope, p_hash: hash });
 }
 
+async function importBundle(data) {
+  if (typeof data.raw !== 'string') throw new HttpError(400, 'raw must contain JSON text.');
+  try { checkSize(data.raw); } catch(error) { throw new HttpError(413,error.message); }
+  let document;
+  try { document=JSON.parse(data.raw); } catch {
+    if(data.dryRun===true) return {ok:false,dryRun:true,count:1,inserted:0,events:[],issues:[{stage:'structure',path:'$',message:'Payload must be valid JSON.'}]};
+  }
+  if (document?.resourceType !== 'Bundle' && data.dryRun !== true) {
+    const event=await persist(data);
+    return {ok:true,single:true,events:[event],count:1,inserted:event.outcome==='accepted'?1:0,quarantined:event.outcome==='quarantined'?1:0,issues:[]};
+  }
+  let prepared;
+  try {
+    prepared = prepareBundle(document?.resourceType === 'Bundle' ? data.raw : JSON.stringify({resourceType:'Bundle',type:'collection',entry:[{resource:document}]}));
+  } catch (error) { if(error instanceof HttpError) throw error; throw new HttpError(400,error.message); }
+  const source = data.source || {kind:'manual',name:'API submission'};
+  if (!source || !['manual','file','url'].includes(source.kind) || typeof source.name !== 'string' || source.name.length>2048) throw new HttpError(400,'Invalid source metadata.');
+  const cleanSource = {kind:source.kind,name:source.name};
+  if(source.kind==='url') { try { sourceUrl(source.name); } catch(error) { throw new HttpError(400,error.message); } }
+  const resolutions = prepared.lookups.length ? await rpc('fhirguard_resolve_references',{p_queries:prepared.lookups}) : [];
+  const checked = resolveBundle(prepared,resolutions);
+  const report = {ok:checked.issues.length===0,count:checked.count,inserted:0,events:[],issues:checked.issues,dryRun:data.dryRun===true};
+  if (checked.issues.length || data.dryRun===true) return report;
+  if (typeof data.requestId !== 'string' || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(data.requestId)) throw new HttpError(400,'requestId must be a UUID.');
+  const digest=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(JSON.stringify(['bundle',data.raw,cleanSource])));
+  const hash=Array.from(new Uint8Array(digest),b=>b.toString(16).padStart(2,'0')).join('');
+  return rpc('fhirguard_store_bundle',{p_records:checked.records,p_source:cleanSource,p_request_id:data.requestId,p_hash:hash,p_create_only:checked.transaction});
+}
+
 async function preview(data) {
   let url;
   try { url = new URL(sourceUrl(data.url)); }
@@ -145,6 +175,7 @@ Deno.serve(async request => {
     if (request.method === 'GET' && path === '/dashboard') return respond(await rpc('fhirguard_dashboard'));
     if (request.method !== 'POST') return respond({ error: 'Route not found.' }, 404);
     const data = await bodyJson(request);
+    if (path === '/import') return respond(await importBundle(data));
     if (path === '/validate') return respond(await persist(data));
     if (path === '/fetch-url') return respond(await preview(data));
     return respond({ error: 'Route not found.' }, 404);

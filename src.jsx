@@ -18,7 +18,7 @@ function QualityPanel({status,busy,onRefresh}) {
  <p className="inputHint">A numeric score is shown only when supplied by Sodabase; trust verdicts are not converted into scores.</p>
  <a href="https://sodabase.io/projects/dbloynewlgozjpqgkyft" target="_blank" rel="noreferrer">Open Sodabase project ↗</a></div></section>
 }
-function App(){const [page,nav]=useState('Validator'),[data,setData]=useState({events:[],score:null,connection:'checking',backend:'pending'}),[result,setResult]=useState(null),[imported,setImported]=useState([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[filter,setFilter]=useState('All'),[detail,inspect]=useState(null);
+function App(){const [page,nav]=useState('Validator'),[data,setData]=useState({events:[],score:null,connection:'checking',backend:'pending'}),[result,setResult]=useState(null),[report,setReport]=useState(null),[imported,setImported]=useState([]),[busy,setBusy]=useState(false),[error,setError]=useState(''),[filter,setFilter]=useState('All'),[detail,inspect]=useState(null);
  async function refresh() {
   try { setData(await snapshot()); }
   catch (error) {
@@ -36,13 +36,14 @@ function App(){const [page,nav]=useState('Validator'),[data,setData]=useState({e
   catch (error) { setError(previous => [previous, 'History refresh failed. ' + error.message].filter(Boolean).join(' ')); }
   setBusy(false);
  }
- function importInput(raw, source) {
+ function importInput(raw, source, dryRun = false) {
+  setReport(null);
   setResult(null);
   setImported([]);
-  return run(() => importDocument(raw, source, event => {
+  return run(async () => setReport(await importDocument(raw, source, event => {
    setResult(event);
    setImported(previous => [...previous, event]);
-  }));
+  }, dryRun)));
  }
  const [trust,setTrust]=useState({status:'checking',reports:[]}),[trustBusy,setTrustBusy]=useState(false);
  async function refreshTrust(){setTrustBusy(true);try{setTrust(await quality());}catch{setTrust({status:'unavailable',reports:[],message:'Could not fetch Sodabase results. Try again shortly.'});}finally{setTrustBusy(false);}}
@@ -61,6 +62,10 @@ function App(){const [page,nav]=useState('Validator'),[data,setData]=useState({e
  <QualityPanel status={trust} busy={trustBusy} onRefresh={refreshTrust}/>
  {data.dataset && <p className="datasetSummary"><strong>{data.dataset.title}</strong> · {data.dataset.resources?.toLocaleString()} source records · {data.dataset.validatedResources?.toLocaleString()} with passing current validation. New submissions use the shared trusted-resource store.</p>}
  {error&&<p role="alert" className="issue">{error}</p>}
+ {page==='Validator' && report && <section className="panel importCheck" aria-live="polite">
+ <div className="panelHead"><h2>{report.single ? 'Validation complete' : report.ok ? report.dryRun ? 'Check passed · nothing saved' : 'Import complete' : 'Import blocked · nothing saved'}</h2></div>
+ <div className="editorBody"><p>{report.count} resources checked · {report.inserted} saved to trusted storage.{report.quarantined ? ' 1 quarantined event recorded.' : ''}{report.dryRun && report.ok ? ' Structure and references passed. Import also checks existing IDs and workspace limits.' : ''}</p>
+ {report.issues.length>0 && <ul>{report.issues.map((issue,i)=><li key={i}><strong>{issue.path}</strong><p>{issue.message}</p></li>)}</ul>}</div></section>}
  {page==='Validator'?<div className="cols"><SourceInput busy={busy} canImport={canImport} onSubmit={importInput}/><div><Verdict event={result}/>
  {imported.length > 0 && <section className="panel importSummary" aria-live="polite">
  <div className="panelHead"><h2>This import · {imported.length} processed</h2></div>
