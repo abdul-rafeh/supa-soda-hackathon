@@ -90,3 +90,8 @@ export async function importDocument(raw, source, onEvent) {
     onEvent(event);
   }
 }
+
+export async function quality() {
+ if (!gatewayConfigured) return {status:'not_configured',reports:[]};
+ return request('/quality');
+}

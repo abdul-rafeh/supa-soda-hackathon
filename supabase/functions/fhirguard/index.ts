@@ -1,3 +1,4 @@
+import { sodabaseStatus } from '../_shared/sodabase.js';
 import { evaluate, fixtures } from '../_shared/engine.js';
 import { checkSize, readJsonResponse, sourceUrl, MAX_BYTES } from '../_shared/imports.js';
 
@@ -140,6 +141,7 @@ Deno.serve(async request => {
   try {
     if (!projectUrl || !serverKey) throw new HttpError(503, 'Database configuration is unavailable.');
     const path = new URL(request.url).pathname.replace(/^.*\/fhirguard/, '') || '/';
+    if (request.method === 'GET' && path === '/quality') return respond(await sodabaseStatus(Deno.env.get('SODABASE_TOKEN')));
     if (request.method === 'GET' && path === '/dashboard') return respond(await rpc('fhirguard_dashboard'));
     if (request.method !== 'POST') return respond({ error: 'Route not found.' }, 404);
     const data = await bodyJson(request);

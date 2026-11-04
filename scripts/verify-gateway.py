@@ -23,14 +23,16 @@ patient = {'resourceType':'Patient','id':'gateway-test-patient','active':True}
 observation = {'resourceType':'Observation','id':'gateway-test-observation','status':'final','code':{'text':'Temperature'},'subject':{'reference':'Patient/gateway-test-patient'}}
 broken = {**observation,'id':'gateway-test-missing','subject':{'reference':'Patient/missing-gateway-test'}}
 bodies = [{'raw':json.dumps(r),'source':{'kind':'manual','name':'Gateway verification'},'requestId':str(uuid.uuid4())} for r in [patient,observation,broken]]
+first_event_id = None
 for body, expected in zip(bodies, ['accepted','accepted','quarantined']):
     status, event = call('/validate', body)
     print('validate', status, event.get('outcome'), event.get('issues'))
     assert status == 200 and event['outcome'] == expected, event
+    if first_event_id is None: first_event_id = event['eventId']
 # A repeated request must resolve to the original persisted event.
 with ThreadPoolExecutor(max_workers=3) as executor:
     repeats = list(executor.map(lambda _:call('/validate', bodies[0]), range(3)))
-assert all(status == 200 and event['eventId'] == bodies[0]['requestId'] for status,event in repeats), repeats
+assert all(status == 200 and event['eventId'] == first_event_id for status,event in repeats), repeats
 conflict={**bodies[0],'raw':json.dumps({**patient,'active':False})}
 assert call('/validate',conflict)[0] == 409
 status,event=call('/validate',{'raw':'{broken','source':{'kind':'manual','name':'Gateway verification'}})

@@ -13,20 +13,21 @@ Import the Patient example, then Observation, then Broken reference. The first t
 
 JSON upload and URL import both load an editable preview. Validate & import submits each resource to the gateway. Single resources and collection/searchset Bundles are supported, with a limit of 1 MiB and 100 resources. Patients are submitted first. URL previews currently accept direct HTTPS JSON from hapi.fhir.org (R4 Patient/Observation endpoints) and raw.githubusercontent.com, with redirects disabled. Only the current search-result page is loaded.
 
-Manual and uploaded records share the uploads source scope. URL records use their HTTPS origin as source scope. Observations resolve Patient/id references within that scope. Imported Bundle fullUrl/urn references, profiles, terminology binding and full FHIRPath validation remain outside this MVP's bounded checks.
+The shared backend resolves relative Type/id references against the seeded clinical dataset and accepted resources in the hackathon workspace. Accepted submissions are keyed by source metadata, resource type and resource ID. Imported Bundle fullUrl/urn references, profiles, terminology binding and full FHIRPath validation remain outside this MVP's bounded checks.
 
 ## Gateway routes
 Requests carry the project's publishable key in the apikey header. This identifies the shared demo application. It is not individual-user authentication. Use synthetic data in this workspace.
 
-- GET /dashboard returns the latest 100 events, totals across all events, and score: null until Sodabase integration is provided.
+- GET /dashboard returns shared ingestion history, event totals, and clinical dataset counts. Numeric score remains null because Sodabase’s documented trust API returns verdicts, not a numerical score.
+- GET /quality reads Sodabase data_trust reports for resources, resource_validation and trusted_resources using a server-only SODABASE_TOKEN. Reports include the provider verdict, last scan time and findings; unknown is retained when a table has not been scanned. Results are cached for 60 seconds per function instance. Missing/invalid credentials are reported explicitly and never block ingestion.
 - POST /validate receives raw (original JSON text), optional source ({kind: manual|file|url, name: string}), and optional requestId (UUID). It returns the persisted event, including failures. Malformed JSON is retained in quarantine.
 - POST /fetch-url receives {url} and returns {raw} for preview without inserting anything. Fetches use an 8-second timeout and a 1 MiB response limit.
 - POST /ingest inserts the three synthetic demo fixtures and returns {events}.
 
 An event includes eventId, time, raw, type, resourceId, source, structure (passed|failed), integrity (passed|failed|skipped), outcome (accepted|quarantined), and issues ([{stage,path,message}]).
-Counts measure submission events. Accepted resources are upserted by source scope and resource ID. Reusing a requestId with the same content returns the original event. Reusing it with different content returns HTTP 409.
+Counts measure submission events. Accepted resources are upserted in fhirguard.trusted_resources by workspace, source metadata, resource type and ID. Reusing a requestId with the same content returns the original event. Reusing it with different content returns HTTP 409.
 
-Imports are sequential and may partially complete. The frontend stops on transport failure and refreshes history. Check history before manually retrying. Each record's reference check, accepted resource write, event and issues commit in one database transaction. The Observation foreign key also enforces patient-reference integrity.
+Imports are sequential and may partially complete. The frontend stops on transport failure and refreshes history. Check history before manually retrying. Each record's reference check, accepted resource write, event and issues commit in one database transaction. The shared SQL submission function checks references and patient/encounter consistency.
 
 ## Backend implementation
 supabase/functions/fhirguard/index.ts is the deployed Edge Function. Shared rules live in supabase/functions/_shared, with root re-exports used by the frontend. The function verifies the apikey against the environment's project publishable keys. verify_jwt is false because these keys are not JWTs; authentication occurs inside the handler. Server database requests use Supabase's provisioned secret key or legacy service-role fallback.
@@ -37,11 +38,13 @@ CORS allows the Vercel production and main-branch aliases, the private Site and 
 
 supabase/schema.sql defines the initial public ingestion_events, patients, observations, validation_issues tables and the two gateway RPCs. It has already been applied to this project. RLS is enabled and browser roles have no direct table or RPC privileges. Only the gateway's service role can use them. The [RLS-with-no-policies informational advisory](https://supabase.com/docs/guides/database/database-linter?lint=0008_rls_enabled_no_policy) is intentional for these service-only tables.
 
-The project also contains an independently populated fhirguard schema (sources, resources, import_runs, validation_runs, resource_validation). The interactive gateway currently uses the public tables above. Its dashboard totals cover gateway events, and do not include that existing dataset. Coordinate the data-model integration with the backend owner before combining the two flows.
+The integration now delegates to the backend owner's public.fhirguard_gateway_record_submission and public.fhirguard_gateway_dashboard functions. Apply supabase/integrate-shared-schema.sql after that shared backend exists. It copies previous interactive history and accepted resources without overwriting existing shared rows, then replaces our compatibility RPCs. New records go into fhirguard.ingestion_events and fhirguard.trusted_resources. public.ingestion_events remains only as the idempotency receipt ledger; old public patient/observation tables are preserved as historical data. The seed dataset remains in fhirguard.resources with its own provenance and validation history.
+
+Set SODABASE_TOKEN in Supabase Edge Function secrets, never in VITE_* variables or the repository. Token documentation: https://sodabase.io/docs/ask-your-agent. Only fixed read-only data_trust calls are exposed by the gateway; no arbitrary MCP tools or scan mutations are public. Enable monitoring for fhirguard.trusted_resources in Sodabase's Tables tab to include new submissions. A new table can remain unknown until a data-quality scan covers it; freshness/volume monitors are distinct from scan verdicts.
 
 ## Verification and deployment
 npm test covers the shared validation and import handling. python3 scripts/verify-gateway.py checks the live API using .env.local and creates synthetic verification events. It verifies persistence, quarantine, replay/conflict behavior, API-key authentication, URL restrictions and HAPI previews.
 
-Deploy the three function source files together, preserving the fhirguard and _shared paths, with name fhirguard and verify_jwt=false. Rebuild the frontend after environment changes. The SQL is an initial setup script; it intentionally fails if those tables already exist.
+Deploy all four function source files together (including _shared/sodabase.js), preserving the fhirguard and _shared paths, with name fhirguard and verify_jwt=false. Rebuild the frontend after environment changes. The SQL is an initial setup script; it intentionally fails if those tables already exist.
 
 The original browser-session demo remains available by clearing both VITE_SUPABASE_URL and VITE_GATEWAY_URL before building.
