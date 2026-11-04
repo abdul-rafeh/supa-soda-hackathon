@@ -34,3 +34,12 @@ Persist and return the optional source field on each event so history retains pr
 POST /fetch-url receives {"url":"https://..."} and returns {"raw":"<original JSON text>"} for preview only. It must not persist records. Restrict sources to an approved HTTPS host allowlist, reject credentials and redirects, block private/loopback/link-local addresses including resolved addresses, limit the response to 1 MiB and use a timeout shorter than the frontend's 15 seconds. Do not forward browser or service credentials to the source. Return a non-2xx status on fetch failure. The existing validation endpoint remains the only insertion path.
 
 In local demo mode the browser fetches the URL directly with credentials omitted and a 15-second timeout. The source must enable CORS and return JSON without redirects. In gateway mode /fetch-url handles the fetch. A generic webpage URL will fail JSON parsing. Live gateway support remains dependent on these backend endpoints.
+
+## Connected Supabase project
+The published frontend is configured for Rafehs Org / supa-soda-hackathon, project ref dbloynewlgozjpqgkyft. The project currently has no public tables or deployed Edge Functions (checked November 4, 2026).
+
+For a local checkout, copy .env.example to .env.local and fill in the existing Supabase publishable key from the project's API settings. Vite includes these public values at build time. Run npm run dev, or npm run build for deployment. The local .env.local is ignored by Git.
+
+When VITE_SUPABASE_URL is configured, the frontend checks GET /auth/v1/settings using the publishable key. A successful check confirms browser access to the project's API; it does not validate the application schema, ingestion routes or row policies. With VITE_GATEWAY_URL empty, the interface shows Backend in progress, permits input previews, and disables import and ingestion actions. Metrics remain unavailable. Failed checks display an error with a Recheck connection action. There is no automatic switch to demo records after a connection failure.
+
+When the backend is ready, set VITE_GATEWAY_URL to the deployed gateway base URL, then rebuild. The frontend checks /dashboard before enabling import. The backend should implement the routes documented above and enforce its chosen authorization and RLS rules. User JWT authentication will need to be integrated if your gateway requires signed-in users. Removing both URL variables enables the original session demo for rehearsals.

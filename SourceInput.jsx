@@ -1,9 +1,9 @@
 import React, { useRef, useState } from 'react';
 import { fixtures } from './engine.js';
-import { fetchSource, live } from './api.js';
+import { fetchSource, gatewayConfigured } from './api.js';
 import { MAX_BYTES, checkSize } from './imports.js';
 
-export default function SourceInput({ busy, onSubmit }) {
+export default function SourceInput({ busy, canImport, onSubmit }) {
   const [mode, setMode] = useState('JSON upload');
   const [raw, setRaw] = useState(JSON.stringify(fixtures[0], null, 2));
   const [url, setUrl] = useState('');
@@ -66,7 +66,7 @@ export default function SourceInput({ busy, onSubmit }) {
         <label htmlFor="source-url">FHIR JSON URL</label>
         <input id="source-url" type="url" placeholder="https://hapi.fhir.org/baseR4/Patient?_count=5" value={url} disabled={disabled} onChange={event => setUrl(event.target.value)} />
         <button className="secondary" disabled={disabled || !url.trim()} onClick={readUrl}>{loading ? 'Loading…' : 'Load preview'}</button>
-        <p className="inputHint">{live ? 'The gateway fetches the URL for preview.' : 'Demo links must allow browser access (CORS).'} Search results import the current page only.</p>
+        <p className="inputHint">{gatewayConfigured ? 'The gateway fetches the URL for preview.' : 'Preview links must allow browser access (CORS).'} Search results import the current page only.</p>
       </div>}
       {error && <p role="alert" className="issue">{error} The preview below has not changed.</p>}
       <div className="examples" aria-label="Examples">{['Patient', 'Observation', 'Broken reference'].map((name, index) => <button key={name} disabled={disabled} onClick={() => load(JSON.stringify(fixtures[index], null, 2), { kind: 'manual', name: name + ' example' })}>{name}</button>)}</div>
@@ -74,7 +74,7 @@ export default function SourceInput({ busy, onSubmit }) {
       <p className="inputHint sourceName">Source · {source.name}</p>
       <textarea id="payload" spellCheck="false" value={raw} disabled={disabled} onChange={event => { setRaw(event.target.value); setSource({ kind: 'manual', name: 'Edited JSON' }); setError(''); }} />
       <p className="inputHint">Previewing does not insert data. Import runs each resource through validation.</p>
-      <button className="primary" disabled={disabled || !raw.trim()} onClick={() => onSubmit(raw, source)}>{busy ? 'Importing…' : 'Validate & import'}</button>
+      <button className="primary" disabled={disabled || !canImport || !raw.trim()} onClick={() => onSubmit(raw, source)}>{busy ? 'Working…' : canImport ? 'Validate & import' : 'Waiting for backend'}</button>
     </div>
   </section>;
 }
