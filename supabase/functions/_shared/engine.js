@@ -1,7 +1,3 @@
-export const patient={resourceType:'Patient',id:'demo-001',active:true,name:[{family:'Rivera',given:['Alex']}]};
-export const observation={resourceType:'Observation',id:'obs-001',status:'final',code:{text:'Body temperature'},subject:{reference:'Patient/demo-001'},valueQuantity:{value:37,unit:'°C'}};
-export const broken={...observation,id:'obs-002',subject:{reference:'Patient/missing-404'}};
-export const fixtures=[patient,observation,broken];
 const statuses=['registered','preliminary','final','amended','corrected','cancelled','entered-in-error','unknown'];
 export function evaluate(raw,events){
  let resource; const issues=[];
@@ -9,7 +5,7 @@ export function evaluate(raw,events){
  try{resource=JSON.parse(raw)}catch{issue('structure','$','Payload must be valid JSON.')}
  const type=resource?.resourceType,id=resource?.id;
  if(!issues.length){
- if(!['Patient','Observation'].includes(type))issue('structure','resourceType','Demo supports Patient and Observation resources.');
+ if(!['Patient','Observation'].includes(type))issue('structure','resourceType','This gateway supports Patient and Observation resources.');
  if(id!==undefined && (typeof id!=='string'||! /^[A-Za-z0-9.-]{1,64}$/.test(id)))issue('structure','id','Use a FHIR id of 1–64 letters, digits, periods or hyphens.');
  if(type==='Patient' && resource.active!==undefined && typeof resource.active!=='boolean')issue('structure','active','Expected a boolean.');
  if(type==='Observation'){
@@ -17,7 +13,7 @@ export function evaluate(raw,events){
  if(values.length>1)issue('structure','value[x]','Observation may supply only one value[x] field.');
  if(!statuses.includes(resource.status))issue('structure','status','Expected an R4 Observation status.');
  const code=resource.code;
- if(!code || typeof code!=='object'||Array.isArray(code)||(!code.text&&!code.coding?.length))issue('structure','code','Supply an observation code with text or coding for this demo.');
+ if(!code || typeof code!=='object'||Array.isArray(code)||(!code.text&&!code.coding?.length))issue('structure','code','Supply an observation code with text or coding.');
  }}
  const structure=issues.length?'failed':'passed';
  if(structure==='passed'){

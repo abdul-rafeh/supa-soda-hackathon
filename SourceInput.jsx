@@ -1,13 +1,12 @@
 import React, { useRef, useState } from 'react';
-import { fixtures } from './engine.js';
 import { fetchSource, gatewayConfigured } from './api.js';
 import { MAX_BYTES, checkSize } from './imports.js';
 
 export default function SourceInput({ busy, canImport, onSubmit }) {
   const [mode, setMode] = useState('JSON upload');
-  const [raw, setRaw] = useState(JSON.stringify(fixtures[0], null, 2));
+  const [raw, setRaw] = useState('');
   const [url, setUrl] = useState('');
-  const [source, setSource] = useState({ kind: 'manual', name: 'Patient example' });
+  const [source, setSource] = useState({ kind: 'manual', name: 'No source selected' });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const operation = useRef(0);
@@ -69,7 +68,6 @@ export default function SourceInput({ busy, canImport, onSubmit }) {
         <p className="inputHint">{gatewayConfigured ? 'Sources supported by the gateway: HAPI FHIR and raw GitHub JSON.' : 'Preview links must allow browser access (CORS).'} Search results import the current page only.</p>
       </div>}
       {error && <p role="alert" className="issue">{error} The preview below has not changed.</p>}
-      <div className="examples" aria-label="Examples">{['Patient', 'Observation', 'Broken reference'].map((name, index) => <button key={name} disabled={disabled} onClick={() => load(JSON.stringify(fixtures[index], null, 2), { kind: 'manual', name: name + ' example' })}>{name}</button>)}</div>
       <label htmlFor="payload">Preview or paste JSON</label>
       <p className="inputHint sourceName">Source · {source.name}</p>
       <textarea id="payload" spellCheck="false" value={raw} disabled={disabled} onChange={event => { setRaw(event.target.value); setSource({ kind: 'manual', name: 'Edited JSON' }); setError(''); }} />

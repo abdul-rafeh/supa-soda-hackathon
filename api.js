@@ -1,13 +1,10 @@
-import {evaluate,fixtures} from './engine.js';
-import { checkSize, resourcesFrom, sourceUrl, readJsonResponse } from './imports.js';
+import { checkSize, resourcesFrom, sourceUrl } from './imports.js';
 const env = import.meta.env || {};
 const base = (env.VITE_GATEWAY_URL || '').replace(/\/$/, '');
 const projectUrl = (env.VITE_SUPABASE_URL || '').replace(/\/$/, '');
 const publishableKey = env.VITE_SUPABASE_PUBLISHABLE_KEY || '';
-export const live = Boolean(projectUrl || base);
 export const gatewayConfigured = Boolean(base);
 export const projectName = env.VITE_SUPABASE_PROJECT_NAME || 'supa-soda-hackathon';
-let localEvents=[];
 async function request(path,body){
  if (!base) throw Error('Backend in progress. The ingestion gateway is not configured yet.');
  const res=await fetch(base+path,{method:body?'POST':'GET',headers:{...(body?{'Content-Type':'application/json'}:{}),...(publishableKey?{apikey:publishableKey}:{})},...(body?{body:JSON.stringify(body)}:{}),signal:AbortSignal.timeout(15000)});
@@ -24,7 +21,7 @@ function checkEvent(e){
  return e;
 }
 export async function snapshot() {
- if (!live) return { events: [...localEvents], score: null, connection: 'demo', backend: 'ready' };
+ if (!projectUrl || !base) throw Error('Live Supabase configuration is missing.');
  if (projectUrl) {
   if (!publishableKey) throw Error('The Supabase publishable key is missing.');
   const response = await fetch(projectUrl + '/auth/v1/settings', {
@@ -44,36 +41,14 @@ export async function snapshot() {
  return { ...data, connection: 'connected', backend: 'ready' };
 }
 export async function submit(raw, source){
- if(live)return checkEvent(await request('/validate',{raw,source,requestId:crypto.randomUUID()}));
- const result={...evaluate(raw,localEvents),source};localEvents.unshift(result);return result;
+ return checkEvent(await request('/validate',{raw,source,requestId:crypto.randomUUID()}));
 }
-export async function ingest(){
- if(live){await request('/ingest',{});return}
- for(const f of fixtures)await submit(JSON.stringify(f,null,2));
-}
-
 
 export async function fetchSource(value) {
-  const url = sourceUrl(value);
-  if (gatewayConfigured) {
-    const result = await request('/fetch-url', { url });
-    if (typeof result.raw !== 'string') throw new Error('Unexpected source response.');
-    return { raw: checkSize(result.raw), url };
-  }
-  try {
-    const response = await fetch(url, {
-      headers: { Accept: 'application/fhir+json, application/json' },
-      credentials: 'omit',
-      redirect: 'error',
-      signal: AbortSignal.timeout(15000)
-    });
-    return { raw: await readJsonResponse(response), url };
-  } catch (error) {
-    if (error instanceof TypeError) {
-      throw new Error('Could not load the URL. Check browser access (CORS), network availability and use a direct URL without redirects.');
-    }
-    throw error;
-  }
+ const url=sourceUrl(value);
+ const result=await request('/fetch-url',{url});
+ if(typeof result.raw!=='string') throw Error('Unexpected source response.');
+ return {raw:checkSize(result.raw),url};
 }
 
 export async function importDocument(raw, source, onEvent) {

@@ -1,5 +1,5 @@
 import { sodabaseStatus } from '../_shared/sodabase.js';
-import { evaluate, fixtures } from '../_shared/engine.js';
+import { evaluate } from '../_shared/engine.js';
 import { checkSize, readJsonResponse, sourceUrl, MAX_BYTES } from '../_shared/imports.js';
 
 const projectUrl = Deno.env.get('SUPABASE_URL');
@@ -147,13 +147,6 @@ Deno.serve(async request => {
     const data = await bodyJson(request);
     if (path === '/validate') return respond(await persist(data));
     if (path === '/fetch-url') return respond(await preview(data));
-    if (path === '/ingest') {
-      const events = [];
-      for (const resource of fixtures) {
-        events.push(await persist({ raw: JSON.stringify(resource), source: { kind: 'manual', name: 'Synthetic demo batch' } }));
-      }
-      return respond({ events });
-    }
     return respond({ error: 'Route not found.' }, 404);
   } catch (error) {
     return respond({ error: error instanceof HttpError ? error.message : 'Unexpected gateway error. Check history before retrying.' }, error instanceof HttpError ? error.status : 500);

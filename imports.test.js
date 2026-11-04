@@ -1,7 +1,8 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { resourcesFrom, sourceUrl, readJsonResponse, MAX_BYTES } from './imports.js';
-import { evaluate, patient, observation } from './engine.js';
+import { evaluate } from './engine.js';
+import { patient, observation } from './tests/unit-fixtures.js';
 test('Bundle accepts an Observation preceding its Patient after ordering', () => {
   const raw = JSON.stringify({resourceType:'Bundle',type:'collection',entry:[{resource:observation},{resource:patient}]});
   const events = [];

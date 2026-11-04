@@ -1,6 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import {evaluate,patient,observation,broken} from './engine.js';
+import {evaluate} from './engine.js';
+import {patient,observation,broken} from './tests/unit-fixtures.js';
 test('judge sequence resolves only accepted Patients',()=>{
  const events=[];
  for(const [r,status] of [[observation,'quarantined'],[patient,'accepted'],[observation,'accepted'],[broken,'quarantined']]){
