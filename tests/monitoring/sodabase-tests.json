@@ -1,0 +1,63 @@
+{
+  "project_url": "https://sodabase.io/projects/dbloynewlgozjpqgkyft",
+  "project_ref": "dbloynewlgozjpqgkyft",
+  "target_table": "fhirguard.resources",
+  "status": "NOT RUN",
+  "blocking_condition": "The current Sodabase workspace shows zero tables. No Sodabase tools are exposed to this chat.",
+  "data_changes_required": false,
+  "instructions": "Run through the official Sodabase MCP after the table is discoverable. Use the dataset identifier returned by list_datasets. Keep all diagnostic rules non-persistent; this negative control is not a real data defect.",
+  "tests": [
+    {
+      "id": "SODA-01",
+      "name": "Project and table discovery",
+      "tool": "list_datasets",
+      "arguments": {
+        "name": "fhirguard.resources"
+      },
+      "pass_condition": "The table is listed under project dbloynewlgozjpqgkyft; report its actual watched state."
+    },
+    {
+      "id": "SODA-02",
+      "name": "Valid resource identities",
+      "tool": "check_rule",
+      "arguments_template": {
+        "dataset": "<dataset identifier from SODA-01>",
+        "rule": "Every row must have non-null source_id, resource_type, and resource_id.",
+        "persist": false
+      },
+      "expected_violating_rows": 0
+    },
+    {
+      "id": "SODA-03",
+      "name": "Expected imported snapshot size",
+      "tool": "check_rule",
+      "arguments_template": {
+        "dataset": "<dataset identifier from SODA-01>",
+        "rule": "For source_id equal to mimic-iv-fhir-demo:2.1.0, the table must contain exactly 12695 rows.",
+        "persist": false
+      },
+      "pass_condition": "Sodabase reports this snapshot-count rule satisfied."
+    },
+    {
+      "id": "SODA-04",
+      "name": "Deliberate failing control without changing data",
+      "tool": "check_rule",
+      "arguments_template": {
+        "dataset": "<dataset identifier from SODA-01>",
+        "rule": "For source_id equal to mimic-iv-fhir-demo:2.1.0, every row must have resource_type equal to Patient.",
+        "persist": false
+      },
+      "expected_violating_rows": 12595,
+      "pass_condition": "Sodabase detects the deliberately false rule; 100 Patient rows pass and 12595 non-Patient rows violate it. This is a successful detection test, not an upstream defect."
+    },
+    {
+      "id": "SODA-05",
+      "name": "Trust verdict and freshness interpretation",
+      "tool": "check_trust",
+      "arguments_template": {
+        "dataset": "<dataset identifier from SODA-01>"
+      },
+      "pass_condition": "Record the actual verdict, measured dimensions, and as_of time. Unknown/unmeasured is not a pass. Historical clinical dates must not be mistaken for an overdue live feed."
+    }
+  ]
+}

@@ -1,0 +1,92 @@
+{
+  "scope": "FHIR R4 JSON Schema plus selected required-field, id-format, choice and consistency rules; not full profile or terminology conformance",
+  "main_file": {
+    "file": "real-fhir-bundle.json",
+    "fhir_compatible": true,
+    "resource_count": 29,
+    "counts": {
+      "Patient": 3,
+      "Observation": 6,
+      "Condition": 3,
+      "Organization": 1,
+      "Procedure": 3,
+      "Encounter": 7,
+      "Location": 6
+    },
+    "references_checked": 79,
+    "unresolved_references": 0
+  },
+  "tests": [
+    {
+      "file": "tests/01-valid-real-patient.json",
+      "expected_fhir_compatible": true,
+      "expected_local_integrity": "passes when its supporting Organization is available",
+      "description": "Unchanged published de-identified Patient.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/02-valid-real-observation.json",
+      "expected_fhir_compatible": true,
+      "expected_local_integrity": "passes with referenced Patient, Encounter and Procedure available",
+      "description": "Unchanged published clinical Observation; dependencies are included in real-fhir-bundle.json.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/03-invalid-patient-types.json",
+      "expected_fhir_compatible": false,
+      "expected_local_integrity": "skipped",
+      "description": "Invalid boolean and date fields; deliberately modified copy.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/04-missing-observation-fields.json",
+      "expected_fhir_compatible": false,
+      "expected_local_integrity": "skipped",
+      "description": "Required Observation status and code removed from a copy.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/05-broken-patient-reference.json",
+      "expected_fhir_compatible": true,
+      "expected_local_integrity": "fails",
+      "description": "Valid FHIR structure, but the referenced patient does not exist in the supplied dataset.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/06-malformed.json",
+      "expected_fhir_compatible": false,
+      "expected_local_integrity": "skipped",
+      "description": "Intentionally malformed JSON; keep the raw text for an audit event if supported.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/07-duplicate-patient-bundle.json",
+      "expected_fhir_compatible": true,
+      "expected_local_integrity": "deduplicate or upsert; do not add a second trusted identity",
+      "description": "Duplicate submissions are a storage/idempotency test, not automatically invalid FHIR.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/08-conflicting-observation-values.json",
+      "expected_fhir_compatible": false,
+      "expected_local_integrity": "skipped",
+      "description": "Supplies valueQuantity and valueString together, violating value[x] cardinality.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/09-valid-minimal-patient.json",
+      "expected_fhir_compatible": true,
+      "expected_local_integrity": "passes",
+      "description": "Synthetic boundary fixture: a false boolean is valid, and name/gender/birthDate are optional in base R4.",
+      "verified_with_bounded_local_checks": true
+    },
+    {
+      "file": "tests/10-invalid-resource-id.json",
+      "expected_fhir_compatible": false,
+      "expected_local_integrity": "skipped",
+      "description": "A deliberately modified id violates the FHIR id character rules.",
+      "verified_with_bounded_local_checks": true
+    }
+  ],
+  "sodabase_execution_status": "not_run; connection table-discovery issue remains unresolved"
+}
